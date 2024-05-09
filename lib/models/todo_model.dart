@@ -41,3 +41,39 @@ class Todo {
     };
   }
 }
+
+class signUpInfo {
+  String? id;
+  String firstname;
+  String lastname;
+  String email;
+
+  signUpInfo(
+      {this.id,
+      required this.firstname,
+      required this.lastname,
+      required this.email});
+
+  factory signUpInfo.fromJson(Map<String, dynamic> json) {
+    return signUpInfo(
+      id: json['id'],
+      firstname: json['firstname'],
+      lastname: json['lastname'],
+      email: json['email'],
+    );
+  }
+
+  static List<signUpInfo> fromJsonArray(String jsonData) {
+    final Iterable<dynamic> data = jsonDecode(jsonData);
+    return data.map<signUpInfo>((dynamic d) => signUpInfo.fromJson(d)).toList();
+  }
+
+  Map<String, dynamic> toJson(signUpInfo signUpInfo) {
+    return {
+      'id': signUpInfo.id,
+      'firstname': signUpInfo.firstname,
+      'lastname': signUpInfo.lastname,
+      'email': signUpInfo.email
+    };
+  }
+}

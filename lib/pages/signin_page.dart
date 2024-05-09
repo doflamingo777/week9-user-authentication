@@ -15,8 +15,6 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
-  String? fname;
-  String? lname;
   bool showSignInErrorMessage = false;
 
   @override
@@ -33,8 +31,6 @@ class _SignInPageState extends State<SignInPage> {
                 heading,
                 emailField,
                 passwordField,
-                firstName,
-                lastName,
                 showSignInErrorMessage ? signInErrorMessage : Container(),
                 submitButton,
                 signUpButton
@@ -88,42 +84,6 @@ class _SignInPageState extends State<SignInPage> {
           },
         ),
       );
-
-  Widget get firstName => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
-        child: TextFormField(
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              label: Text("First Name"),
-              hintText: "Firstname"),
-          obscureText: true,
-          onSaved: (value) => setState(() => fname = value),
-          validator: (value) {
-            if (value == null || value.isEmpty || value.length < 6) {
-              return "Please enter your First Name";
-            }
-            return null;
-          },
-        ),
-      );
-  Widget get lastName => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
-        child: TextFormField(
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              label: Text("Last Name"),
-              hintText: "LastName"),
-          obscureText: true,
-          onSaved: (value) => setState(() => lname = value),
-          validator: (value) {
-            if (value == null || value.isEmpty || value.length < 6) {
-              return "Please enter your Last Name";
-            }
-            return null;
-          },
-        ),
-      );
-
   Widget get signInErrorMessage => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -133,27 +93,31 @@ class _SignInPageState extends State<SignInPage> {
       );
 
   Widget get submitButton => ElevatedButton(
-      onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-          _formKey.currentState!.save();
-          String? message = await context
-              .read<UserAuthProvider>()
-              .authService
-              .signIn(email!, password!, fname!, lname!);
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            _formKey.currentState!.save();
+            String? message = await context
+                .read<UserAuthProvider>()
+                .authService
+                .signIn(email!, password!);
 
-          print(message);
-          print(showSignInErrorMessage);
+            print(message);
+            print(showSignInErrorMessage);
 
-          setState(() {
-            if (message != null && message.isNotEmpty) {
-              showSignInErrorMessage = true;
-            } else {
-              showSignInErrorMessage = false;
-            }
-          });
-        }
-      },
-      child: const Text("Sign In"));
+            setState(
+              () {
+                if (message != null && message.isNotEmpty) {
+                  showSignInErrorMessage = true;
+                  signInErrorMessage;
+                } else {
+                  showSignInErrorMessage = false;
+                }
+              },
+            );
+          }
+        },
+        child: const Text("Sign In"),
+      );
 
   Widget get signUpButton => Padding(
         padding: const EdgeInsets.all(30),
@@ -162,13 +126,16 @@ class _SignInPageState extends State<SignInPage> {
           children: [
             const Text("No account yet?"),
             TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignUpPage()));
-                },
-                child: const Text("Sign Up"))
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SignUpPage(),
+                  ),
+                );
+              },
+              child: const Text("Sign Up"),
+            )
           ],
         ),
       );

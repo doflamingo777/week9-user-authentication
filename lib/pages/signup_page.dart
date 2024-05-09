@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../models/todo_model.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -74,7 +75,7 @@ class _SignUpState extends State<SignUpPage> {
               hintText: "Enter a First Name"),
           onSaved: (value) => setState(() => fname = value),
           validator: (value) {
-            if (value == null || value.isEmpty || value.length < 6) {
+            if (value == null || value.isEmpty) {
               return "Please enter a valid First Name";
             }
             return null;
@@ -90,7 +91,7 @@ class _SignUpState extends State<SignUpPage> {
               hintText: "Enter a valid Last Name"),
           onSaved: (value) => setState(() => lname = value),
           validator: (value) {
-            if (value == null || value.isEmpty || value.length < 6) {
+            if (value == null || value.isEmpty) {
               return "Please enter a valid Last Name";
             }
             return null;
@@ -108,8 +109,8 @@ class _SignUpState extends State<SignUpPage> {
           obscureText: true,
           onSaved: (value) => setState(() => password = value),
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Please enter a valid password";
+            if (value == null || value.isEmpty || value.length < 8) {
+              return "Password must be atleast 8 characters long.";
             }
             return null;
           },
@@ -120,10 +121,14 @@ class _SignUpState extends State<SignUpPage> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
-          await context
-              .read<UserAuthProvider>()
-              .authService
-              .signUp(email!, password!, fname!, lname!);
+          signUpInfo signUpDeets = signUpInfo.fromJson(
+              {'firstname': fname, 'lastname': lname, 'email': email});
+
+          await context.read<UserAuthProvider>().signUp(
+                signUpDeets,
+                email!,
+                password!,
+              );
 
           // check if the widget hasn't been disposed of after an asynchronous action
           if (mounted) Navigator.pop(context);
