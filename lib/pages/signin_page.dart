@@ -15,6 +15,8 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
+  String? fname;
+  String? lname;
   bool showSignInErrorMessage = false;
 
   @override
@@ -22,21 +24,24 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 100, horizontal: 30),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  heading,
-                  emailField,
-                  passwordField,
-                  showSignInErrorMessage ? signInErrorMessage : Container(),
-                  submitButton,
-                  signUpButton
-                ],
-              ),
-            )),
+          margin: const EdgeInsets.symmetric(vertical: 100, horizontal: 30),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                heading,
+                emailField,
+                passwordField,
+                firstName,
+                lastName,
+                showSignInErrorMessage ? signInErrorMessage : Container(),
+                submitButton,
+                signUpButton
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -84,6 +89,41 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
+  Widget get firstName => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              label: Text("First Name"),
+              hintText: "Firstname"),
+          obscureText: true,
+          onSaved: (value) => setState(() => fname = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter your First Name";
+            }
+            return null;
+          },
+        ),
+      );
+  Widget get lastName => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              label: Text("Last Name"),
+              hintText: "LastName"),
+          obscureText: true,
+          onSaved: (value) => setState(() => lname = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter your Last Name";
+            }
+            return null;
+          },
+        ),
+      );
+
   Widget get signInErrorMessage => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -99,7 +139,7 @@ class _SignInPageState extends State<SignInPage> {
           String? message = await context
               .read<UserAuthProvider>()
               .authService
-              .signIn(email!, password!);
+              .signIn(email!, password!, fname!, lname!);
 
           print(message);
           print(showSignInErrorMessage);

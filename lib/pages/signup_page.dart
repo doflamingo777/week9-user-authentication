@@ -13,6 +13,8 @@ class _SignUpState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
+  String? fname;
+  String? lname;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,14 @@ class _SignUpState extends State<SignUpPage> {
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [heading, emailField, passwordField, submitButton],
+                children: [
+                  heading,
+                  emailField,
+                  passwordField,
+                  firstName,
+                  lastName,
+                  submitButton
+                ],
               ),
             )),
       ),
@@ -51,6 +60,38 @@ class _SignUpState extends State<SignUpPage> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter a valid email format";
+            }
+            return null;
+          },
+        ),
+      );
+  Widget get firstName => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              label: Text("First Name"),
+              hintText: "Enter a First Name"),
+          onSaved: (value) => setState(() => fname = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter a valid First Name";
+            }
+            return null;
+          },
+        ),
+      );
+  Widget get lastName => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              label: Text("Last Name"),
+              hintText: "Enter a valid Last Name"),
+          onSaved: (value) => setState(() => lname = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter a valid Last Name";
             }
             return null;
           },
@@ -82,7 +123,7 @@ class _SignUpState extends State<SignUpPage> {
           await context
               .read<UserAuthProvider>()
               .authService
-              .signUp(email!, password!);
+              .signUp(email!, password!, fname!, lname!);
 
           // check if the widget hasn't been disposed of after an asynchronous action
           if (mounted) Navigator.pop(context);
